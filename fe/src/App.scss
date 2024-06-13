@@ -1,18 +1,53 @@
 .app {
   position: absolute;
   inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  align-content: space-around;
+  background-color: gray;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
+  > .score {
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4vw;
+    color: yellow;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
   > .playground {
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: 80%;
+    height: 80%;
     overflow: hidden;
+    background-color: green;
 
     > .person {
       position: absolute;
       aspect-ratio: 1;
       width: 10%;
       background: url(../public/img/stop.gif) no-repeat center center / cover;
+      transform: translate(-50%, -50%);
+    }
+
+    > .coin {
+      position: absolute;
+      width: 3%;
+      height: 3%;
+      background: url(../public/img/coin.png) no-repeat center center / contain;
+      transform: translate(-50%, -50%);
+    }
+
+    > .banana {
+      position: absolute;
+      width: 10%;
+      height: 10%;
+      background: url(../public/img/banana.png) no-repeat center center / contain;
       transform: translate(-50%, -50%);
     }
   }
