@@ -38,3 +38,7 @@ FE port 7733
 ````
 
 Edit `.env` files in `BE` and `FE` to change ports.
+
+## Known Issues
+
+Fast arrows clicking needs improvements.
