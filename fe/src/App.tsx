@@ -14,12 +14,20 @@ type Item = {
   size: number;
 };
 
+function Player() {
+  const names = ["Alex", "Jordan", "Taylor", "Casey", "Jamie", "Morgan", "Riley", "Jesse", "Cameron", "Avery"];
+  const randomName = names[Math.floor(Math.random() * names.length)];
+  const randomYear = Math.floor(Math.random() * (2000 - 1980 + 1)) + 1980;
+  return `${randomName}${String(randomYear % 100).padStart(2, '0')}`;
+}
+
 function App() {
   const [person, setPerson] = useState<Person>({
     top: 80,
     left: 50,
     size: 3,
   });
+  const [player, setPlayer] = useState(localStorage.getItem('player') || '');
   const [direction, setDirection] = useState(0);
   const [key, setKey] = useState<string | null>(null);
   const [isFocused, setIsFocused] = useState(document.hasFocus());
@@ -54,6 +62,14 @@ function App() {
         break;
     }
   };
+
+  useEffect(() => {
+    if (!player) {
+      const randomName = Player();
+      localStorage.setItem('player', randomName);
+      setPlayer(randomName);
+    }
+  }, [player]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -217,7 +233,7 @@ function App() {
       }}
     >
       <div className="score">
-        Score: {score} • You have: {time}''
+        Hi {player} • Your score is {score} • You have {time}''
       </div>
       <div className="playground">
         {coins.map((coin) => (
