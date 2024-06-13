@@ -1,6 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.scss";
 
+if (!process.env.REACT_APP_BE) {
+  throw new Error('Missing REACT_APP_BE var in .env file');
+}
+
+const config = {
+  timer: 60, // sec
+  speed: 25,
+  coins: {
+    max: 30,
+    every: 2500, // ms
+  },
+  bananas: {
+    max: 10,
+    every: 3333, //ms
+  }
+}
+
 type Person = {
   top: number;
   left: number;
@@ -15,10 +32,21 @@ type Item = {
 };
 
 function Player() {
-  const names = ["Alex", "Jordan", "Taylor", "Casey", "Jamie", "Morgan", "Riley", "Jesse", "Cameron", "Avery"];
+  const names = [
+    "Alex",
+    "Jordan",
+    "Taylor",
+    "Casey",
+    "Jamie",
+    "Morgan",
+    "Riley",
+    "Jesse",
+    "Cameron",
+    "Avery",
+  ];
   const randomName = names[Math.floor(Math.random() * names.length)];
   const randomYear = Math.floor(Math.random() * (2000 - 1980 + 1)) + 1980;
-  return `${randomName}${String(randomYear % 100).padStart(2, '0')}`;
+  return `${randomName}${String(randomYear % 100).padStart(2, "0")}`;
 }
 
 function App() {
@@ -27,14 +55,15 @@ function App() {
     left: 50,
     size: 3,
   });
-  const [player, setPlayer] = useState(localStorage.getItem('player') || '');
+  const [player, setPlayer] = useState(localStorage.getItem("player") || "");
   const [direction, setDirection] = useState(0);
   const [key, setKey] = useState<string | null>(null);
   const [isFocused, setIsFocused] = useState(document.hasFocus());
   const [coins, setCoins] = useState<Item[]>([]);
   const [bananas, setBananas] = useState<Item[]>([]);
   const [score, setScore] = useState(0);
-  const [time, setTime] = useState(120);
+  const [time, setTime] = useState(config.timer);
+  const [scoreResponse, setScoreResponse] = useState(null);
   const prevScoreRef = useRef(0);
 
   const move = (direction: string) => {
@@ -63,63 +92,84 @@ function App() {
     }
   };
 
+  // api call to save score
+  useEffect(() => {
+    if (time === 0) {
+      fetch(`${process.env.REACT_APP_BE}/score`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ player, score }),
+      })
+        .then((response) => response.json())
+        .then((data) => setScoreResponse(data))
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  }, [time, score, player]);
+
+  // player name
   useEffect(() => {
     if (!player) {
       const randomName = Player();
-      localStorage.setItem('player', randomName);
+      localStorage.setItem("player", randomName);
       setPlayer(randomName);
     }
   }, [player]);
 
+  // player position
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCoins((coins) => {
-        if (coins.length >= 30) {
-          return coins; // max 30 coins
+        if (coins.length >= config.coins.max) {
+          return coins;
         }
 
         return [
           ...coins,
           {
-            id: Math.random(), 
-            top: Math.random() * 100, 
-            left: Math.random() * 100, 
+            id: Math.random(),
+            top: Math.random() * 100,
+            left: Math.random() * 100,
             size: 3,
           },
         ];
       });
-    }, 2500); // add coin every 2.5'' 
+    }, config.coins.every);
 
     return () => {
       clearInterval(intervalId);
     };
   }, []);
 
+  // banana position
   useEffect(() => {
     const intervalId = setInterval(() => {
       setBananas((bananas) => {
-        if (bananas.length >= 20) {
-          // max 20 bananas
+        if (bananas.length >= config.bananas.max) {
           return bananas;
         }
 
         return [
           ...bananas,
           {
-            id: Math.random(), 
-            top: Math.random() * 100, 
-            left: Math.random() * 100, 
+            id: Math.random(),
+            top: Math.random() * 100,
+            left: Math.random() * 100,
             size: 3,
           },
         ];
       });
-    }, 5000); // add banana every 5'' 
+    }, config.bananas.every);
 
     return () => {
       clearInterval(intervalId);
     };
   }, []);
 
+  // game focus
   useEffect(() => {
     const handleFocus = () => {
       setIsFocused(true);
@@ -138,6 +188,7 @@ function App() {
     };
   }, []);
 
+  // arrows 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       setKey(event.key);
@@ -156,12 +207,12 @@ function App() {
     };
   }, []);
 
+  // move person
   useEffect(() => {
-    // walking
     if (key) {
       const intervalId = setInterval(() => {
         move(key);
-      }, 25); // walking speed
+      }, config.speed); 
 
       return () => {
         clearInterval(intervalId);
@@ -169,6 +220,7 @@ function App() {
     }
   }, [key]);
 
+  // hit/remove coins
   useEffect(() => {
     if (time === 0) {
       return;
@@ -196,6 +248,7 @@ function App() {
     });
   }, [person, score, time]);
 
+  // hit bananas
   useEffect(() => {
     if (time === 0) {
       return;
@@ -215,6 +268,7 @@ function App() {
     });
   }, [person, bananas, time]);
 
+  // timer
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTime((prevTime) => Math.max(0, prevTime - 1));
