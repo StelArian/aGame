@@ -1,0 +1,16 @@
+{
+  "name": "aGame",
+  "packageManager": "yarn@4.2.2",
+  "version": "1.0.0",
+  "workspaces": [
+    "be",
+    "fe"
+  ],
+  "scripts": {
+    "fe": "yarn workspace fe start",
+    "be": "yarn workspace be start"
+  },
+  "dependencies": {
+    "sass": "^1.77.5"
+  }
+}
