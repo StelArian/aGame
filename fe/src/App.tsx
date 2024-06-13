@@ -59,20 +59,20 @@ function App() {
     const intervalId = setInterval(() => {
       setCoins((coins) => {
         if (coins.length >= 30) {
-          return coins; // max 30 coins on screen
+          return coins; // max 30 coins
         }
 
         return [
           ...coins,
           {
-            id: Math.random(), // coin id
-            top: Math.random() * 100, // random position from 0 to 100
-            left: Math.random() * 100, // random position from 0 to 100
+            id: Math.random(), 
+            top: Math.random() * 100, 
+            left: Math.random() * 100, 
             size: 3,
           },
         ];
       });
-    }, 5000); // add a new coin every 5 seconds
+    }, 2500); // add coin every 2.5'' 
 
     return () => {
       clearInterval(intervalId);
@@ -82,21 +82,22 @@ function App() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setBananas((bananas) => {
-        if (bananas.length >= 10) {
-          return bananas; // if there are already 10 or more bananas, don't add a new one
+        if (bananas.length >= 20) {
+          // max 20 bananas
+          return bananas;
         }
 
         return [
           ...bananas,
           {
-            id: Math.random(), // unique id for each banana
-            top: Math.random() * 100, // random position from 0 to 100
-            left: Math.random() * 100, // random position from 0 to 100
+            id: Math.random(), 
+            top: Math.random() * 100, 
+            left: Math.random() * 100, 
             size: 3,
           },
         ];
       });
-    }, 15000); // add a new banana every 15 seconds
+    }, 5000); // add banana every 5'' 
 
     return () => {
       clearInterval(intervalId);
@@ -153,14 +154,17 @@ function App() {
   }, [key]);
 
   useEffect(() => {
+    if (time === 0) {
+      return;
+    }
     setCoins((coins) => {
       const newCoins = coins.filter((coin) => {
-        // Calculate the distance between the person and the coin
+        // Calculate distance between person and coin
         const dx = person.left - coin.left;
         const dy = person.top - coin.top;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        // If the distance is less than the sum of their sizes, remove the coin
+        // If distance is less than the sum of their sizes, remove coin
         const isCollected = distance < person.size / 2 + coin.size / 2;
 
         if (isCollected && prevScoreRef.current === score) {
@@ -174,23 +178,36 @@ function App() {
 
       return newCoins;
     });
-  }, [person, score]);
+  }, [person, score, time]);
 
   useEffect(() => {
+    if (time === 0) {
+      return;
+    }
     bananas.forEach((banana) => {
-      // Calculate the distance between the person and the banana
+      // Calculate distance between person and banana
       const dx = person.left - banana.left;
       const dy = person.top - banana.top;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      // If the distance is less than the sum of their sizes, set the score to 0
+      // If distance is less than the sum of their sizes, set score to 0
       const isCollected = distance < person.size / 2 + banana.size / 2;
 
       if (isCollected) {
         setScore(0);
       }
     });
-  }, [person, bananas]); // Only re-run the effect if `person` or `bananas` changes
+  }, [person, bananas, time]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTime((prevTime) => Math.max(0, prevTime - 1));
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   return (
     <div
@@ -200,7 +217,7 @@ function App() {
       }}
     >
       <div className="score">
-        Score: {score} • Time: {time}''
+        Score: {score} • You have: {time}''
       </div>
       <div className="playground">
         {coins.map((coin) => (
