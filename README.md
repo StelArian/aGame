@@ -4,6 +4,10 @@ A sample game
 ## Description
 aGame is a sample game designed to provide a fun and engaging experience for players of all ages. 
 
+Collect coins moving around with arrow keys. Avoid bananas! Score set to 0 if you step on banana!
+
+For new game, reload the page.
+
 ## Installation
 Clone the repository and install the dependencies:
 
