@@ -20,6 +20,8 @@ cd aGame
 yarn install
 ```
 
+Repo written with node v20.14.0
+
 ## Usage
 
 To start the backend of the game, run the following command:
@@ -33,6 +35,8 @@ To start the frontend of the game, run the following command:
 ```bash
 yarn fe
 ```
+
+You can configure game settings (like time, speed, max coins or bananas) at the beginning of `App.tsx`
 
 ## Ports
 

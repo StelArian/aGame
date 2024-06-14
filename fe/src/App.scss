@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
 .app {
   position: absolute;
   inset: 0;
@@ -7,19 +9,60 @@
   flex-direction: column;
   align-content: space-around;
   background-color: gray;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Press Start 2P", cursiven Verdana;
 
   > .score {
     width: 80%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3.5vw;
+    font-size: 1.5vw;
     color: yellow;
     overflow: hidden;
     white-space: nowrap;
+
+    > h3 {
+      font-size: 1.5vw;
+    }
   }
-  
+
+  .gameover {
+    position: absolute;
+    inset: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 1.3vw;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: lime;
+
+    > div {
+      width: 70%;
+      min-height: 50%;
+      background-color: rgba(0, 0, 0, 0.5);
+      overflow: auto;
+
+      > div {
+        display: grid;
+        grid-template-columns: 15% 40% 15% 30%;
+
+        > span {
+          display: table-cell;
+          padding: 10px;
+          border: 1px solid lime;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    > h2 {
+      cursor: pointer;
+    }
+  }
+
   > .playground {
     position: relative;
     width: 80%;
@@ -47,7 +90,8 @@
       position: absolute;
       width: 10%;
       height: 10%;
-      background: url(../public/img/banana.png) no-repeat center center / contain;
+      background: url(../public/img/banana.png) no-repeat center center /
+        contain;
       transform: translate(-50%, -50%);
     }
   }

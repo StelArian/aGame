@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import "./App.scss";
 
 if (!process.env.REACT_APP_BE) {
-  throw new Error('Missing REACT_APP_BE var in .env file');
+  throw new Error("Missing REACT_APP_BE var in .env file");
 }
 
 const config = {
@@ -15,8 +16,15 @@ const config = {
   bananas: {
     max: 10,
     every: 3333, //ms
-  }
-}
+  },
+};
+
+type Score = {
+  id: string;
+  player: string;
+  score: number;
+  date: string;
+};
 
 type Person = {
   top: number;
@@ -25,11 +33,13 @@ type Person = {
 };
 
 type Item = {
-  id: number;
+  id: string;
   top: number;
   left: number;
   size: number;
 };
+
+const roundId = uuidv4();
 
 function Player() {
   const names = [
@@ -43,6 +53,16 @@ function Player() {
     "Jesse",
     "Cameron",
     "Avery",
+    "Sydney",
+    "Bailey",
+    "Devin",
+    "Reese",
+    "Kendall",
+    "Peyton",
+    "Skyler",
+    "Kerry",
+    "Jaden",
+    "Emerson",
   ];
   const randomName = names[Math.floor(Math.random() * names.length)];
   const randomYear = Math.floor(Math.random() * (2000 - 1980 + 1)) + 1980;
@@ -63,7 +83,7 @@ function App() {
   const [bananas, setBananas] = useState<Item[]>([]);
   const [score, setScore] = useState(0);
   const [time, setTime] = useState(config.timer);
-  const [scoreResponse, setScoreResponse] = useState(null);
+  const [scoreResponse, setScoreResponse] = useState<Score[]>([]);
   const prevScoreRef = useRef(0);
 
   const move = (direction: string) => {
@@ -100,10 +120,10 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ player, score }),
+        body: JSON.stringify({ id: roundId, player, score }),
       })
         .then((response) => response.json())
-        .then((data) => setScoreResponse(data))
+        .then((data) => setScoreResponse(data || []))
         .catch((error) => {
           console.error("Error:", error);
         });
@@ -130,7 +150,7 @@ function App() {
         return [
           ...coins,
           {
-            id: Math.random(),
+            id: uuidv4(),
             top: Math.random() * 100,
             left: Math.random() * 100,
             size: 3,
@@ -155,7 +175,7 @@ function App() {
         return [
           ...bananas,
           {
-            id: Math.random(),
+            id: uuidv4(),
             top: Math.random() * 100,
             left: Math.random() * 100,
             size: 3,
@@ -188,7 +208,7 @@ function App() {
     };
   }, []);
 
-  // arrows 
+  // arrows
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       setKey(event.key);
@@ -212,7 +232,7 @@ function App() {
     if (key) {
       const intervalId = setInterval(() => {
         move(key);
-      }, config.speed); 
+      }, config.speed);
 
       return () => {
         clearInterval(intervalId);
@@ -287,7 +307,9 @@ function App() {
       }}
     >
       <div className="score">
-        Hi {player} • Your score is {score} • You have {time}''
+        <h3>
+          Hi {player} • Your score is {score} • You have {time}''
+        </h3>
       </div>
       <div className="playground">
         {coins.map((coin) => (
@@ -319,6 +341,34 @@ function App() {
             backgroundImage: key ? `url(/img/walk.gif)` : "",
           }}
         ></div>
+        {!time && (
+          <div className="gameover">
+            <h1>Game Over</h1>
+            <div>
+              {scoreResponse.map((score, index) => (
+                <div
+                  key={index}
+                  style={{
+                    color: score.id === roundId ? "yellow" : "",
+                  }}
+                >
+                  <span>{index + 1}.</span>
+                  <span>{score.player}</span>
+                  <span>{score.score}c</span>
+                  <span>{new Date(score.date).toLocaleDateString()}</span>
+                </div>
+              ))}
+            </div>
+            <h2
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.reload();
+              }}
+            >
+              Start New Game Here!
+            </h2>
+          </div>
+        )}
       </div>
     </div>
   );
