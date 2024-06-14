@@ -15,7 +15,7 @@ For new game, reload the page.
 Clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/yourusername/aGame.git
+git clone https://github.com/StelArian/aGame.git
 cd aGame
 yarn install
 ```
