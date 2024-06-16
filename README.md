@@ -17,7 +17,8 @@ Clone the repository and install the dependencies:
 ```bash
 git clone https://github.com/StelArian/aGame.git
 cd aGame
-yarn install
+corepack enable
+corepack yarn install
 ```
 
 Repo written with node v20.14.0
@@ -27,13 +28,13 @@ Repo written with node v20.14.0
 To start the backend of the game, run the following command:
 
 ```bash
-yarn be
+corepack yarn be
 ```
 
 To start the frontend of the game, run the following command:
 
 ```bash
-yarn fe
+corepack yarn fe
 ```
 
 You can configure game settings (like time, speed, max coins or bananas) at the beginning of `App.tsx`
